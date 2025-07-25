@@ -54,8 +54,13 @@ async def main():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    x, y = event.pos
+                elif event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.FINGERDOWN:
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        x, y = event.pos
+                    else:
+                        x = event.x * WIDTH
+                        y = event.y * HEIGHT
+
                     if play_button.collidepoint(x, y):
                         game_state = "playing"
                     elif volume_button.collidepoint(x, y):
@@ -75,20 +80,29 @@ async def main():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    x, y = event.pos
+                elif event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.FINGERDOWN:
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        x, y = event.pos
+                    else:
+                        x = event.x * WIDTH
+                        y = event.y * HEIGHT
+
                     if back_button.collidepoint(x, y):
                         game_state = "menu"
                     elif abs(x - handle_x) <= 12 and abs(y - slider_rect[1]) <= 20:
                         dragging_volume = True
                 elif event.type == pygame.MOUSEBUTTONUP:
                     dragging_volume = False
-                elif event.type == pygame.MOUSEMOTION and dragging_volume:
-                    x, y = event.pos
+                elif (event.type == pygame.MOUSEMOTION or event.type == pygame.FINGERMOTION) and dragging_volume:
+                    if event.type == pygame.MOUSEMOTION:
+                        x, y = event.pos
+                    else:
+                        x = event.x * WIDTH
+                        y = event.y * HEIGHT
+
                     new_x = max(slider_rect[0], min(x, slider_rect[0] + slider_rect[2]))
                     volume = (new_x - slider_rect[0]) / slider_rect[2]
                     set_all_volumes(volume, WIN_SOUND, FALLING_SOUND)
-
         if game_state == "playing":
             clock.tick(120)
             for event in pygame.event.get():#chuỗi sự kiện
