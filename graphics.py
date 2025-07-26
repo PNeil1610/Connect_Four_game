@@ -181,10 +181,9 @@ def draw_menu(screen):
 
     # Nút "Chỉnh âm lượng"
     volume_button = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 30, 200, 60)
-    pygame.draw.rect(screen,BLUE, volume_button, border_radius=10)
+    pygame.draw.rect(screen, ORANGE, volume_button, border_radius=10)
     vol_text = FONT_SMALL.render("Chỉnh âm lượng", True, BLACK)
-    screen.blit(vol_text, (volume_button.centerx - vol_text.get_width() // 2,
-                            volume_button.centery - vol_text.get_height() // 2))
+    screen.blit(vol_text, (volume_button.centerx - vol_text.get_width() // 2, volume_button.centery - vol_text.get_height() // 2))
 
     # Nút "Thoát game"
     exit_button = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 120, 200, 60)
@@ -218,7 +217,7 @@ def draw_volume_settings(screen, volume):
 
     # Nút quay lại
     back_button = pygame.Rect(WIDTH // 2 - 80, HEIGHT // 2 + 100, 160, 50)
-    pygame.draw.rect(screen, GREEN, back_button, border_radius=10)
+    pygame.draw.rect(screen, ORANGE, back_button, border_radius=10)
     back_text = FONT_SMALL.render("Xong", True, BLACK)
     screen.blit(back_text, (back_button.centerx - back_text.get_width() // 2,
                              back_button.centery - back_text.get_height() // 2))

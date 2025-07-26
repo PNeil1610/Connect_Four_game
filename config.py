@@ -20,6 +20,7 @@ GREY = (128, 128, 128)
 GREEN = (0, 255, 0)
 LIGHT_BLUE = (173, 216, 230)
 DARK_GREY = (64, 64, 64)
+ORANGE = (255, 165, 0)
 # Font
 pygame.font.init()
 FONT_LARGE = pygame.font.SysFont("Segoe UI", 36)
