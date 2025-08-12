@@ -21,17 +21,21 @@ if sys.stderr and hasattr(sys.stderr, "reconfigure"):
 async def main():
     pygame.init()
     game_state = "menu"
-    volume = 0.5  # âm lượng mặc định
+# âm thanh
+    volume = 0.5
+    volume_music = 0.5
+    volume_win = 0.5
+    volume_fall = 0.5
     pygame.mixer.music.set_volume(volume)
     pygame.mixer.init()
     dragging_volume = False
-    # pygame.mixer.music.load(resource_path("assets/nhacnen.mp3"))
-    # pygame.mixer.music.set_volume(0.3)
-    # pygame.mixer.music.play(-1) 
+    pygame.mixer.music.load(resource_path("assets/nhacnen.mp3"))
+    pygame.mixer.music.set_volume(volume_music)
+    pygame.mixer.music.play(-1) 
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Connect 4")
     Player1_DISC, Player2_DISC, WIN_SOUND, FALLING_SOUND = load_assets(resource_path)
-    set_all_volumes(volume, WIN_SOUND, FALLING_SOUND)
+    set_all_volumes(volume, volume_win, volume_fall, WIN_SOUND, FALLING_SOUND)
 
     board = create_board()
     current_player = 'X'
@@ -73,14 +77,14 @@ async def main():
             continue
 
         elif game_state == "volume_settings":
-            slider_rect, handle_x, back_button = draw_volume_settings(screen, volume)
+            sliders, back_button = draw_volume_settings(screen, volume_music, volume_win, volume_fall)
             pygame.display.update()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                elif event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.FINGERDOWN:
+                elif event.type in (pygame.MOUSEBUTTONDOWN, pygame.FINGERDOWN):
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         x, y = event.pos
                     else:
@@ -89,20 +93,33 @@ async def main():
 
                     if back_button.collidepoint(x, y):
                         game_state = "menu"
-                    elif abs(x - handle_x) <= 12 and abs(y - slider_rect[1]) <= 20:
-                        dragging_volume = True
+
+                    for i, (slider_rect, handle_x) in enumerate(sliders):
+                        if abs(x - handle_x) <= 12 and abs(y - slider_rect[1]) <= 20:
+                            dragging_volume = i  # 0: music, 1: win, 2: fall
+
                 elif event.type == pygame.MOUSEBUTTONUP:
-                    dragging_volume = False
-                elif (event.type == pygame.MOUSEMOTION or event.type == pygame.FINGERMOTION) and dragging_volume:
+                    dragging_volume = None
+
+                elif (event.type in (pygame.MOUSEMOTION, pygame.FINGERMOTION)) and dragging_volume is not None:
                     if event.type == pygame.MOUSEMOTION:
                         x, y = event.pos
                     else:
                         x = event.x * WIDTH
                         y = event.y * HEIGHT
 
-                    new_x = max(slider_rect[0], min(x, slider_rect[0] + slider_rect[2]))
-                    volume = (new_x - slider_rect[0]) / slider_rect[2]
-                    set_all_volumes(volume, WIN_SOUND, FALLING_SOUND)
+                    slider_x, slider_y, slider_width = sliders[dragging_volume][0]
+                    new_x = max(slider_x, min(x, slider_x + slider_width))
+                    new_vol = (new_x - slider_x) / slider_width
+
+                    if dragging_volume == 0:
+                        volume_music = new_vol
+                    elif dragging_volume == 1:
+                        volume_win = new_vol
+                    elif dragging_volume == 2:
+                        volume_fall = new_vol
+
+                    set_all_volumes(volume_music, volume_win, volume_fall, WIN_SOUND, FALLING_SOUND)
         if game_state == "playing":
             clock.tick(120)
             for event in pygame.event.get():#chuỗi sự kiện
@@ -181,8 +198,6 @@ async def main():
                 particle.draw(screen)
                 if particle.alpha <= 0:
                     particles.remove(particle)
-
-
 
 
             draw_turn_info(screen, current_player)

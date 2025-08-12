@@ -28,12 +28,19 @@ def load_sound(path):
         print(f"Lỗi khi tải âm thanh {path}: {e}")
         return None
 
-def set_all_volumes(volume, win_sound, fall_sound):
-    pygame.mixer.music.set_volume(volume)
+# def set_all_volumes(volume, win_sound, fall_sound):
+#     pygame.mixer.music.set_volume(volume)
+#     if win_sound:
+#         win_sound.set_volume(volume)
+#     if fall_sound:
+#         fall_sound.set_volume(volume)
+
+def set_all_volumes(volume_music, volume_win, volume_fall, win_sound, fall_sound):
+    pygame.mixer.music.set_volume(volume_music)
     if win_sound:
-        win_sound.set_volume(volume)
+        win_sound.set_volume(volume_win)
     if fall_sound:
-        fall_sound.set_volume(volume)
+        fall_sound.set_volume(volume_fall)
 
 def load_victory_image(path):
    
@@ -195,34 +202,70 @@ def draw_menu(screen):
     return play_button, volume_button, exit_button
 
 
-def draw_volume_settings(screen, volume):
+# def draw_volume_settings(screen, volume):
+#     screen.fill(LIGHT_BLUE)
+
+#     title = FONT_LARGE.render("Âm lượng", True, BLACK)
+#     screen.blit(title, (WIDTH // 2 - title.get_width() // 2, HEIGHT // 4))
+
+#     # Thanh trượt
+#     slider_x = WIDTH // 2 - 150
+#     slider_y = HEIGHT // 2
+#     slider_width = 300
+#     slider_height = 8
+
+#     pygame.draw.rect(screen, DARK_GREY, (slider_x, slider_y, slider_width, slider_height), border_radius=5)
+#     handle_x = slider_x + int(volume * slider_width)
+#     handle_y = slider_y + slider_height // 2
+#     pygame.draw.circle(screen, PURPLE, (handle_x, handle_y), 12)
+
+#     vol_text = FONT_SMALL.render(f"{int(volume*100)}%", True, BLACK)
+#     screen.blit(vol_text, (WIDTH // 2 - vol_text.get_width() // 2, slider_y + 30))
+
+#     # Nút quay lại
+#     back_button = pygame.Rect(WIDTH // 2 - 80, HEIGHT // 2 + 100, 160, 50)
+#     pygame.draw.rect(screen, ORANGE, back_button, border_radius=10)
+#     back_text = FONT_SMALL.render("Xong", True, BLACK)
+#     screen.blit(back_text, (back_button.centerx - back_text.get_width() // 2,
+#                              back_button.centery - back_text.get_height() // 2))
+
+#     return (slider_x, slider_y, slider_width), handle_x, back_button
+
+def draw_volume_settings(screen, vol_music, vol_win, vol_fall):
     screen.fill(LIGHT_BLUE)
 
-    title = FONT_LARGE.render("Âm lượng", True, BLACK)
-    screen.blit(title, (WIDTH // 2 - title.get_width() // 2, HEIGHT // 4))
+    title = FONT_LARGE.render("Chỉnh âm lượng", True, BLACK)
+    screen.blit(title, (WIDTH // 2 - title.get_width() // 2, HEIGHT // 6))
 
-    # Thanh trượt
-    slider_x = WIDTH // 2 - 150
-    slider_y = HEIGHT // 2
-    slider_width = 300
-    slider_height = 8
+    sliders = []
+    labels = ["Nhạc nền", "Âm thanh thắng", "Âm thanh thả rơi"]
+    volumes = [vol_music, vol_win, vol_fall]
+    y_start = HEIGHT // 3
+    spacing = 90
 
-    pygame.draw.rect(screen, DARK_GREY, (slider_x, slider_y, slider_width, slider_height), border_radius=5)
-    handle_x = slider_x + int(volume * slider_width)
-    handle_y = slider_y + slider_height // 2
-    pygame.draw.circle(screen, PURPLE, (handle_x, handle_y), 12)
+    for i, (label_text, vol) in enumerate(zip(labels, volumes)):
+        label = FONT_SMALL.render(f"{label_text}: {int(vol*100)}%", True, BLACK)
+        screen.blit(label, (WIDTH // 2 - 150, y_start + i*spacing - 30))
 
-    vol_text = FONT_SMALL.render(f"{int(volume*100)}%", True, BLACK)
-    screen.blit(vol_text, (WIDTH // 2 - vol_text.get_width() // 2, slider_y + 30))
+        slider_x = WIDTH // 2 - 150
+        slider_y = y_start + i*spacing
+        slider_width = 300
+        slider_height = 9
 
-    # Nút quay lại
-    back_button = pygame.Rect(WIDTH // 2 - 80, HEIGHT // 2 + 100, 160, 50)
+        pygame.draw.rect(screen, DARK_GREY, (slider_x, slider_y, slider_width, slider_height), border_radius=5)
+        handle_x = slider_x + int(vol * slider_width)
+        handle_y = slider_y + slider_height // 2
+        pygame.draw.circle(screen, PURPLE, (handle_x, handle_y), 12)
+
+        sliders.append(((slider_x, slider_y, slider_width), handle_x))
+
+    back_button = pygame.Rect(WIDTH // 2 - 80, HEIGHT - 100, 160, 50)
     pygame.draw.rect(screen, ORANGE, back_button, border_radius=10)
     back_text = FONT_SMALL.render("Xong", True, BLACK)
     screen.blit(back_text, (back_button.centerx - back_text.get_width() // 2,
                              back_button.centery - back_text.get_height() // 2))
 
-    return (slider_x, slider_y, slider_width), handle_x, back_button
+    return sliders, back_button
 
 
 def draw_back_button(screen):

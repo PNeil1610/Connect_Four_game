@@ -8,12 +8,11 @@ class Particle:
         self.vx = random.uniform(-3, 3)
         self.vy = random.uniform(-4, -2)
         self.alpha = 255
-        self.radius = random.randint(6, 10)
+        self.radius = random.randint(6, 15)
         self.color = random.choice([
             (255, 255, 255), (255, 200, 0), (255, 50, 50),
             (50, 150, 255), (255, 0, 255), (0, 255, 150),
         ])
-
     def update(self):
         self.x += self.vx
         self.y += self.vy
