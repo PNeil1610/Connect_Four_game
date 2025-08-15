@@ -21,11 +21,10 @@ if sys.stderr and hasattr(sys.stderr, "reconfigure"):
 async def main():
     pygame.init()
     game_state = "menu"
-# âm thanh
-    volume = 0.5
-    volume_music = 0.5
-    volume_win = 0.5
-    volume_fall = 0.5
+    volume = 0.2
+    volume_music = 0.2
+    volume_win = 0.2
+    volume_fall = 0.2
     pygame.mixer.music.set_volume(volume)
     pygame.mixer.init()
     dragging_volume = False
@@ -36,7 +35,7 @@ async def main():
     pygame.display.set_caption("Connect 4")
     Player1_DISC, Player2_DISC, WIN_SOUND, FALLING_SOUND = load_assets(resource_path)
     set_all_volumes(volume, volume_win, volume_fall, WIN_SOUND, FALLING_SOUND)
-
+   
     board = create_board()
     current_player = 'X'
     game_over = False
@@ -96,7 +95,7 @@ async def main():
 
                     for i, (slider_rect, handle_x) in enumerate(sliders):
                         if abs(x - handle_x) <= 12 and abs(y - slider_rect[1]) <= 20:
-                            dragging_volume = i  # 0: music, 1: win, 2: fall
+                            dragging_volume = i  
 
                 elif event.type == pygame.MOUSEBUTTONUP:
                     dragging_volume = None
@@ -122,16 +121,13 @@ async def main():
                     set_all_volumes(volume_music, volume_win, volume_fall, WIN_SOUND, FALLING_SOUND)
         if game_state == "playing":
             clock.tick(120)
-            for event in pygame.event.get():#chuỗi sự kiện
+            for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                # elif event.type == pygame.MOUSEMOTION and not game_over and not dropping:
-                #     x, y = event.pos
-                #     col = x // SQUARESIZE if SQUARESIZE <= y < HEIGHT - SQUARESIZE else None
+                
                 elif (event.type == pygame.MOUSEMOTION or event.type == pygame.FINGERMOTION) and not game_over and not dropping:
                     x, y = event.pos
-                    # Chỉ cập nhật col nếu chuột nằm trong khu vực ngang của bàn cờ
                     if 0 <= x <= WIDTH:
                         col = x // SQUARESIZE
                     else:
@@ -144,7 +140,6 @@ async def main():
                         y = event.y * HEIGHT
                     res = handle_input(x, y, screen, board, current_player, game_over, dropping)
                     if back_rect.collidepoint(x, y):
-                        # Quay về menu và reset game
                         board, current_player, game_over, particles, dropping, col = reset_game()
                         game_state = "menu"
                         continue
@@ -180,7 +175,6 @@ async def main():
                     else:
                         current_player = 'O' if current_player == 'X' else 'X'
             if not dropping and not game_over:
-                # Nếu chưa rê chuột thì col vẫn None, ta đặt mặc định là giữa
                 if col is None:
                     col = COLUMN_COUNT // 2
             screen.fill(LIGHT_BLUE)
@@ -198,7 +192,6 @@ async def main():
                 particle.draw(screen)
                 if particle.alpha <= 0:
                     particles.remove(particle)
-
 
             draw_turn_info(screen, current_player)
             button_rect = draw_reset_button(screen)
